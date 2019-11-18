@@ -1,0 +1,18 @@
+﻿
+@{
+    ViewBag.Title = "LoggedIn";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    if(Session == null)
+    {
+        Response.Redirect("~/User/Login");
+    }
+}
+
+<h2>Welcome to the main page</h2>
+@if(Session["UserID"] != null)
+{
+    <h4>Hello @Session["Email"].ToString()</h4>
+    <div>
+        <a href="@Url.Action("LogOut", "User")">Log Out</a>
+    </div>
+}

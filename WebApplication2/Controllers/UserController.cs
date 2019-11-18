@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using WebApplication2.Models;
+using System.Web.Security;
 
 namespace WebApplication2.Controllers
 {
@@ -58,11 +59,11 @@ namespace WebApplication2.Controllers
                 {
                     Session["UserID"] = usr.UserID.ToString();
                     Session["Email"] = usr.Email.ToString();
-                    return RedirectToAction("LoggedIn");
+                    return RedirectToAction("LoggedIn", "Home");
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Some error occurred");
+                    ModelState.AddModelError("", "Wrong email or password");
                 }
             }
             return View();
@@ -76,8 +77,14 @@ namespace WebApplication2.Controllers
             }
             else
             {
-                return RedirectToAction("Login");
+                return RedirectToAction("Login", "User");
             }
+        }
+
+        public ActionResult LogOut()
+        {
+            Session.Clear();
+            return RedirectToAction("Login", "User");
         }
     }
 }
