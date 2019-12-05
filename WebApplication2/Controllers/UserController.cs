@@ -29,6 +29,13 @@ namespace WebApplication2.Controllers
         {
             if (ModelState.IsValid)
             {
+                var isExist = IsEmailExist(user.Email);
+                if (isExist)
+                {
+                    ModelState.AddModelError("EmailExist", "Email already exist");
+                    return View(user);
+                }
+
                 using (OurContext db = new OurContext())
                 {
                     db.users.Add(user);
@@ -85,6 +92,17 @@ namespace WebApplication2.Controllers
         {
             Session.Clear();
             return RedirectToAction("Login", "User");
+        }
+
+        [NonAction]
+        public bool IsEmailExist(string email)
+        {
+            using (OurContext dc = new OurContext())
+            {
+                var v = dc.users.Where(a => a.Email == email).FirstOrDefault();
+                return v != null;
+
+            }
         }
     }
 }
