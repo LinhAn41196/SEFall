@@ -1,18 +1,54 @@
-﻿
+﻿@using System.Data
+@using System.Linq
+
+@model DataSet
+
 @{
     ViewBag.Title = "LoggedIn";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    if(Session == null)
+    if (Session == null)
     {
         Response.Redirect("~/User/Login");
     }
 }
 
 <h2>Welcome to the main page</h2>
-@if(Session["UserID"] != null)
+@if (Session["UserID"] != null)
 {
-    <h4>Hello @Session["Email"].ToString()</h4>
-    <div>
-        <a href="@Url.Action("LogOut", "User")">Log Out</a>
-    </div>
+    <!DOCTYPE html>
+
+    <html>
+    <head>
+        <h4>Hello @Session["Email"].ToString()</h4>
+        <div>
+            <a href="@Url.Action("LogOut", "User")">Log Out</a>
+        </div>
+        <meta name="viewport" content="width=device-width" />
+        <title>Index</title>
+    </head>
+    <body>
+        @using (Html.BeginForm())
+        {
+            <input type="file" name="postedFile" />
+            <input type="submit" value="Import" />
+        }
+        <hr />
+        @if (Model != null)
+        {
+            WebGrid webGrid = new WebGrid(source: (from p in Model.Tables[0].AsEnumerable()
+                                                   select new
+                                                   {
+                                                       Id = p.Field<object>("Id").ToString(),
+                                                       Name = p.Field<object>("Name").ToString(),
+                                                       Country = p.Field<object>("Country").ToString()
+                                                   }), canSort: false, canPage: false);
+            @webGrid.GetHtml(
+            htmlAttributes: new { @id = "WebGrid" },
+            columns: webGrid.Columns(
+                    webGrid.Column("Id", "Id"),
+                    webGrid.Column("Name", "Name"),
+                    webGrid.Column("Country", "Country")));
+        }
+    </body>
+</html>
 }
